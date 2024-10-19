@@ -9,13 +9,20 @@ body {
   align-items: center;
   min-height: 100vh;
 }
+
 .container {
   width: 90%;
   max-width: 400px;
+  background-color: rgba(0, 0, 0, 0.8); /* Fundal uniform pentru container */
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  padding: 30px;
+  position: relative;
 }
 
 .section {
-  padding: 50px;
+ 
+  padding: 30px;
   margin-bottom: 40px;
 }
 
@@ -58,57 +65,9 @@ body {
   background-color: #0056b3;
 }
 
-#exit{
-  background: red;
-}
 
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #1e1e1e; 
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  position: relative;
-}
 
-.container {
-  width: 90%;
-  max-width: 400px;
-  background-color: rgba(0, 0, 0, 0.8); 
-  border-radius: 20px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-  padding: 30px;
-  position: relative;
-}
-
-.section {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.profile-info h2 {
-  font-size: 24px;
-  color: #ff9900;
-  margin-bottom: 10px;
-}
-
-.profile-info p {
-  font-size: 18px;
-  color: greenyellow;
-  margin-bottom: 10px;
-}
-
-.coordinates p {
-  font-size: 16px;
-  color: #ffcc66;
-}
-
-/* Floating map icon (left corner) */
-#seeMapIcon {
+.seeMapIcon {
   position: absolute;
   top: 20px;
   left: 20px;
@@ -120,26 +79,17 @@ body {
 }
 
 /* Floating exit icon (right corner) */
-#exitIcon {
+.exitIcon {
   position: absolute;
   top: 20px;
   right: 20px;
-  background-color: transparent;
+  background-color: transparent; /* Fundal transparent */
   border: none;
   cursor: pointer;
   color: #f44336; /* Red color for the exit icon */
   font-size: 24px;
 }
 
-/* Buttons styling */
-.btn-group {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-/* Update Status button with green color */
 #updateStatusBtn {
   width: 100%;
   padding: 10px;
@@ -161,32 +111,4 @@ body {
   color: #fff;
   font-size: 16px;
   cursor: pointer;
-}
-
-/* Navigation styling */
-.navigation {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  background-color: rgba(0, 0, 0, 0.8); 
-  padding: 10px 0;
-}
-
-.navigation li {
-  list-style: none;
-}
-
-.navigation li a {
-  color: #fff;
-  text-decoration: none;
-}
-
-.navigation li a span.icon ion-icon {
-  font-size: 24px;
-}
-
-.navigation li.active a span.icon ion-icon {
-  color: #ff9900;
 }
