@@ -24,8 +24,59 @@ document.getElementById('updateStatusBtn').addEventListener('click', function() 
   }
 });
 
-document.getElementById('seeAlertBtn').addEventListener('click', function() {
-  alert('Alert seen!'); // Implement alert logic here
+document.getElementById('seeAlertBtn').addEventListener('click', async function() {
+    // Show the popup
+    document.getElementById('popupForm').style.display = 'block';
+
+    // Fetch the current alert message and display it in the input field
+    try {
+        const response = await fetch(`https://serverdimm.onrender.com/get/${userId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch the current alert message.');
+        }
+
+        const data = await response.json();
+        document.getElementById('messageText').value = data.mesajalerta || '';  
+    } catch (error) {
+        console.error('Error fetching alert message:', error);
+        alert('Could not load the current alert message. Please try again later.');
+    }
+});
+
+// Close popup
+document.getElementById('closePopup').addEventListener('click', function() {
+    document.getElementById('popupForm').style.display = 'none';
+});
+
+// Handle sending the updated alert message
+document.getElementById('sendMessage').addEventListener('click', async function() {
+    const message = document.getElementById('messageText').value.trim();
+
+    if (message === "") {
+        alert('Please enter a message');
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://serverdimm.onrender.com/update-alert/${userId}`, {
+            method: 'PATCH',  // HTTP method for updating
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ mesajalerta: message })  // Send the message in the request body
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update the alert message.');
+        }
+
+        const result = await response.json();
+        alert('Alert message updated successfully!');
+        document.getElementById('popupForm').style.display = 'none';  // Close the popup after updating
+    } catch (error) {
+        console.error('Error updating alert message:', error);
+        alert('Could not update the alert message. Please try again later.');
+    }
 });
 
 // Exit button logic to delete user from database and local storage

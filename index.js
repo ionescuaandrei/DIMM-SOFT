@@ -27,7 +27,7 @@ function sendFormData(nume, echipa, latitude, longitude) {
       team: echipa, 
       latitudine: latitude, 
       longitudine: longitude, 
-      mesajalerta: "" 
+      mesajalerta: "Hello, I am here!" 
   }
 
   fetch('https://serverdimm.onrender.com/register', {
