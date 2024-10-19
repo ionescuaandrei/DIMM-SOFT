@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../css/nav/nav.css">
+    <title>Chat List</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,6 +56,7 @@
         .chat-info p {
             font-size: 14px;
             color: greenyellow;
+            margin: 5px 0;
         }
         .chat-status {
             font-size: 14px;
@@ -65,38 +67,18 @@
         .chat-status.offline {
             color: #ff0000;
         }
+        .alert-message {
+            color: #ff0000;
+            font-weight: bold;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="section">
-            <ul class="chat-list">
-                <li class="chat-item">
-                    
-                    <div class="chat-info">
-                        <h3>Andrei Andrei</h3>
-                        <p>Distance: 2 km</p>
-                    </div>
-                    <span class="chat-status online">Online</span>
-                </li>
-
-                <li class="chat-item">
-                    
-                    <div class="chat-info">
-                        <h3>Jasd ASJSA</h3>
-                        <p>Distance: 5 km</p>
-                    </div>
-                    <span class="chat-status offline">Offline</span>
-                </li>
-
-                <li class="chat-item">
-                    
-                    <div class="chat-info">
-                        <h3>Michael Brown</h3>
-                        <p>Distance: 10 km</p>
-                    </div>
-                    <span class="chat-status online">Online</span>
-                </li>
+            <ul id="chatList" class="chat-list">
+                <!-- Chat items will be dynamically inserted here -->
             </ul>
         </div>
     </div>
@@ -122,11 +104,64 @@
             </span>
           </a>
         </li>
-      </ul>
+    </ul>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script src="../../js/nav/nav.js"></script>
 
+    <script>
+        // Function to calculate distance between two points
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius of the Earth in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Function to fetch player data and update the UI
+        async function fetchAndDisplayPlayers() {
+            try {
+                const response = await fetch('https://serverdimm.onrender.com/getall');
+                const players = await response.json();
+                const chatList = document.getElementById('chatList');
+                chatList.innerHTML = ''; // Clear existing list
+
+                // Assume these are the coordinates of the current user
+                const currentLat = 44.4268; // Example latitude for Bucharest
+                const currentLng = 26.1025; // Example longitude for Bucharest
+
+                players.forEach(player => {
+                    const distance = calculateDistance(currentLat, currentLng, player.latitudine, player.longitudine);
+                    
+                    const listItem = document.createElement('li');
+                    listItem.className = 'chat-item';
+                    listItem.innerHTML = `
+                        <img src="../../../Utils/avatars/default.png" alt="${player.nume}" class="chat-img">
+                        <div class="chat-info">
+                            <h3>${player.nume}</h3>
+                            <p>Team: ${player.team}</p>
+                            <p>Distance: ${distance.toFixed(2)} km</p>
+                            ${player.mesajalerta ? `<p class="alert-message">${player.mesajalerta}</p>` : ''}
+                        </div>
+                        <span class="chat-status">Ultima ora când a fost văzut</span>
+                    `;
+                    chatList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error fetching player data:', error);
+            }
+        }
+
+        // Call the function when the page loads
+        window.addEventListener('load', fetchAndDisplayPlayers);
+
+        // Refresh the list every 60 seconds
+        setInterval(fetchAndDisplayPlayers, 60000);
+    </script>
 </body>
 </html>
