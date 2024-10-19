@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Location with Leaflet</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="Utils/leaflet.css" />
+    <style>
+        #map {
+            height: 100vh; /* Full screen map */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="Utils/leaflet.js"></script>
+
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([51.505, -0.09], 13); // Default coordinates (London)
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Check if Geolocation is available
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+
+                // Set the map's view to the user's location
+                map.setView([lat, lng], 13);
+
+                // Add a marker at the user's location
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup("You are here!")
+                    .openPopup();
+            }, function(error) {
+                alert("Unable to retrieve your location due to " + error.message);
+            });
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+    </script>
+
+</body>
+</html>
