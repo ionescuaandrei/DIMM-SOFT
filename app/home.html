@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Location with Leaflet</title>
+    <title>My Location and my Compass</title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="../Utils/leaflet.css" />
     <link rel="stylesheet" href="../../app/css/nav/nav.css">
@@ -32,6 +32,16 @@
             z-index: 1000; 
             display: none; 
         }
+        #compass {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 100px;
+            height: 100px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="black" stroke-width="2"/><polygon points="50,10 45,50 50,90 55,50" fill="red"/><polygon points="50,10 45,50 50,90 55,50" fill="white" transform="rotate(180 50 50)"/><text x="50" y="25" text-anchor="middle" fill="black">N</text><text x="50" y="80" text-anchor="middle" fill="black">S</text><text x="80" y="52" text-anchor="middle" fill="black">E</text><text x="20" y="52" text-anchor="middle" fill="black">W</text></svg>');
+            background-size: cover;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
@@ -58,9 +68,10 @@
             </span>
           </a>
         </li>
-      </ul>
+    </ul>
 
     <div id="map"></div>
+    <div id="compass"></div>
     <div class="alert" id="alertMessage"></div>
 
     <!-- Leaflet JS -->
@@ -129,6 +140,24 @@
             });
         } else {
             showAlert("Geolocation is not supported by your browser.");
+        }
+
+        // Compass functionality
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', function(event) {
+                var compass = document.getElementById('compass');
+                if (event.webkitCompassHeading) {
+                    // For iOS devices
+                    compass.style.transform = `rotate(${-event.webkitCompassHeading}deg)`;
+                } else if (event.alpha) {
+                    // For Android devices
+                    compass.style.transform = `rotate(${360 - event.alpha}deg)`;
+                } else {
+                    showAlert("Compass data is not available on your device.");
+                }
+            });
+        } else {
+            showAlert("Device orientation is not supported by your browser.");
         }
     </script>
 
