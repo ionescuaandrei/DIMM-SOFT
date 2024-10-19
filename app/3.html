@@ -10,52 +10,21 @@
             padding: 0;
             background-color: #1e1e1e; 
             color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
         .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center; 
-            min-height: 100vh; 
-            padding: 20px;
+            width: 90%;
+            max-width: 400px;
         }
         .section {
             background-color: rgba(0, 0, 0, 0.8); 
             border-radius: 20px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
             padding: 30px;
-            width: 90%;
-            max-width: 400px;
             margin-bottom: 40px;
-        }
-        .profile-img {
-            border-radius: 50%; 
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            margin: 0 auto 20px auto;
-            border: 5px solid orange;
-            display: block; 
-        }
-        .profile-info {
-            text-align: center;
-        }
-        .profile-info h2 {
-            margin: 10px 0;
-            font-size: 24px;
-            color: #ff9900; 
-        }
-        .profile-info p {
-            margin: 5px 0;
-            font-size: 18px;
-            color: greenyellow;
-        }
-        .coordinates {
-            text-align: center; 
-        }
-        .coordinates p {
-            font-size: 16px;
-            color: #ffcc66; 
         }
         .chat-list {
             list-style: none;
@@ -80,7 +49,6 @@
         }
         .chat-info {
             flex-grow: 1;
-            text-align: left;
         }
         .chat-info h3 {
             margin: 0;
@@ -88,13 +56,11 @@
             color: #ff9900;
         }
         .chat-info p {
-            margin: 5px 0;
             font-size: 14px;
             color: greenyellow;
         }
         .chat-status {
             font-size: 14px;
-            color: #cccccc;
         }
         .chat-status.online {
             color: #00ff00;
@@ -105,23 +71,7 @@
     </style>
 </head>
 <body>
-
     <div class="container">
-
-        <!-- profile page -->
-        <div class="section">
-            <img src="avatar.png" alt="User Photo" class="profile-img">
-            <div class="profile-info">
-                <h2>Pula Mea</h2>
-                <p>Team: ajsdlk</p>
-            </div>
-            <div class="coordinates">
-                <p>Latitude: 45.7625</p>
-                <p>Longitude: 21.2396</p>
-            </div>
-        </div>
-
-        <!-- chats -->
         <div class="section">
             <ul class="chat-list">
                 <li class="chat-item">
@@ -152,7 +102,6 @@
                 </li>
             </ul>
         </div>
-
     </div>
 
 </body>
