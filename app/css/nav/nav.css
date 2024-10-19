@@ -21,7 +21,7 @@ body {
   bottom: 0; /* Aligns the navigation to the bottom */
   left: 0;
   width: 100vw;
-  height: 110px;
+  height: 90px;
   background: #242433;
   display: flex;
   justify-content: space-between;
@@ -79,7 +79,6 @@ body {
 .navigation li.active a .icon {
   background: #ff9900;
   color: #fff;
-  transform: translateY(-25px);
   box-shadow: 5px 5px 7px rgba(0, 0, 0, 0.25),
     inset 2px 2px 3px rgba(255, 255, 255, 0.25),
     inset -3px -3px 5px rgba(0, 0, 0, 0.5);

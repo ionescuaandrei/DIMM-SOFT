@@ -3,70 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #1e1e1e; 
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            width: 90%;
-            max-width: 400px;
-        }
-        .section {
-            background-color: rgba(0, 0, 0, 0.8); 
-            border-radius: 20px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-            padding: 30px;
-            margin-bottom: 40px;
-        }
-        .profile-img {
-            border-radius: 50%; 
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            margin: 0 auto 20px;
-            border: 5px solid orange;
-            display: block;
-        }
-        .profile-info, .coordinates {
-            text-align: center;
-        }
-        .profile-info h2 {
-            margin: 10px 0;
-            font-size: 24px;
-            color: #ff9900;
-        }
-        .profile-info p, .coordinates p {
-            font-size: 18px;
-            color: greenyellow;
-        }
-        .coordinates p {
-            font-size: 16px;
-            color: #ffcc66; 
-        }
-    </style>
+    <link rel="stylesheet" href="../../css/nav/nav.css">
+    <link rel="stylesheet" href="../../css/profile.css">
 </head>
 <body>
     <div class="container">
         <div class="section">
-            <img src="../../../Utils/avatars/Dracula.png" alt="User Photo" class="profile-img">
             <div class="profile-info">
-                <h2>Pula Mea</h2>
-                <p>Team: ajsdlk</p>
+                <h2 id="nume">Loading...</h2>
+                <p id="team">Team: Loading...</p>
             </div>
             <div class="coordinates">
-                <p>Latitude: 45.7625</p>
-                <p>Longitude: 21.2396</p>
+                <p id="latitudine">Latitude: Loading...</p>
+                <p id="longitudine">Longitude: Loading...</p>
+            </div>
+
+            <!-- Buttons for actions -->
+            <div class="btn-group">
+                <button id="seeMapBtn">See Map</button>
+                <button id="updateStatusBtn">Update Status</button>
+                <button id="seeAlertBtn">See Alert</button>
             </div>
         </div>
     </div>
 
+    <ul class="navigation">
+        <li>
+          <a href="../../home.html">
+            <span class="icon">
+              <ion-icon name="home-outline"></ion-icon>
+            </span>
+          </a>
+        </li>
+        <li class="active">
+          <a href="../../html/pages/profile.html">
+            <span class="icon">
+              <ion-icon name="person-outline"></ion-icon>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="../../html/pages/chats.html">
+            <span class="icon">
+              <ion-icon name="chatbubble-outline"></ion-icon>
+            </span>
+          </a>
+        </li>
+      </ul>
+
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="../../js/nav/nav.js"></script>
+    <script src="../../js/profile.js"></script>
 </body>
 </html>

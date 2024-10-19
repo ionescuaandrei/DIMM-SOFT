@@ -1,119 +1,30 @@
-<body>
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>My Location with Leaflet</title>
-      <!-- Leaflet CSS -->
-      <link rel="stylesheet" href="../Utils/leaflet.css" />
-    <link rel="stylesheet" href="../app/css/nav/nav.css">
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creare Echipa</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+<body>
 
-      <style>
-          body {
-              margin: 0;
-              font-family: Arial, sans-serif;
-              background-color: #f8f9fa; 
-          }
-          #map {
-              height: 100vh;
-              width: 100%;
-          }
-          .popup {
-              font-size: 1.1em; 
-          }
-          .alert {
-              position: absolute;
-              top: 20px;
-              left: 50%;
-              transform: translateX(-50%);
-              background-color: rgba(255, 255, 255, 0.9); 
-              border-radius: 5px;
-              padding: 10px 15px;
-              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-              z-index: 1000; 
-              display: none; 
-          }
-      </style>
-  </head>
-  <body>
-  
-      <div id="map"></div>
-      <div class="alert" id="alertMessage"></div>
-  
-      <!-- Leaflet JS -->
-      <script src="../Utils/leaflet.js"></script>
-  
-      <script>
-          var map = L.map('map').setView([51.505, -0.09], 13); 
-  
-          // Add OpenStreetMap tiles
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '© OpenStreetMap contributors'
-          }).addTo(map);
-  
-          // Check if Geolocation is available
-          if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition(function(position) {
-                  var lat = position.coords.latitude;
-                  var lng = position.coords.longitude;
-  
-                  // Set the map's view to the user's location
-                  map.setView([lat, lng], 13);
-  
-                  // Add a marker at the user's location
-                  L.marker([lat, lng]).addTo(map)
-                      .bindPopup("<div class='popup'>You are here!</div>")
-                      .openPopup();
-              }, function(error) {
-                  showAlert("Unable to retrieve your location due to " + error.message);
-              });
-          } else {
-              showAlert("Geolocation is not supported by your browser.");
-          }
-  
-          function showAlert(message) {
-              var alertMessage = document.getElementById('alertMessage');
-              alertMessage.textContent = message;
-              alertMessage.style.display = 'block'; 
-              setTimeout(function() {
-                  alertMessage.style.display = 'none'; 
-              }, 5000);
-          }
-      </script>
+    <div class="form-container">
+        <h2>Creează Echipa</h2>
+        <form id="teamForm">
+            <label for="nume">Nume:</label>
+            <input type="text" id="nume" name="nume" placeholder="Introdu numele tău" required>
 
+            <label for="echipa">Echipa:</label>
+            <input type="text" id="echipa" name="echipa" placeholder="Introdu numele echipei" required>
 
-    <ul class="navigation">
-        <li class="active">
-          <a href="../index.html">
-            <span class="icon">
-              <ion-icon name="home-outline"></ion-icon>
-            </span>
-            <span class="text">Home</span>
-          </a>
-        </li>
-        <li>
-          <a href="../app/html/pages/profile.html">
-            <span class="icon">
-              <ion-icon name="person-outline"></ion-icon>
-            </span>
-            <span class="text">Profile</span>
-          </a>
-        </li>
-        <li>
-          <a href="../app/html/pages/chats.html">
-            <span class="icon">
-              <ion-icon name="chatbubble-outline"></ion-icon>
-            </span>
-            <span class="text">Messages</span>
-          </a>
-        </li>
-      </ul>
+            <button type="submit">Creează Echipa</button>
+        </form>
+    </div>
 
-    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-    <script src="../app/js/nav/nav.js"></script>
+    <div class="alert" id="alertMessage"></div>
+
+    
+    <script src="index.js"></script>
+
 </body>
 </html>

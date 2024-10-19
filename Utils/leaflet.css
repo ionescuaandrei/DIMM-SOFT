@@ -411,6 +411,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 /* attribution and scale controls */
 
 .leaflet-container .leaflet-control-attribution {
+	display: none;
 	background: #fff;
 	background: rgba(255, 255, 255, 0.8);
 	margin: 0;

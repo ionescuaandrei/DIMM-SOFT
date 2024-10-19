@@ -6,6 +6,7 @@
     <title>My Location with Leaflet</title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="../Utils/leaflet.css" />
+    <link rel="stylesheet" href="../../app/css/nav/nav.css">
     <style>
         body {
             margin: 0;
@@ -35,12 +36,38 @@
 </head>
 <body>
 
+    <ul class="navigation">
+        <li class="active">
+          <a href="home.html">
+            <span class="icon">
+              <ion-icon name="home-outline"></ion-icon>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="../../app/html/pages/profile.html">
+            <span class="icon">
+              <ion-icon name="person-outline"></ion-icon>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="../../app/html/pages/chats.html">
+            <span class="icon">
+              <ion-icon name="chatbubble-outline"></ion-icon>
+            </span>
+          </a>
+        </li>
+      </ul>
+
     <div id="map"></div>
     <div class="alert" id="alertMessage"></div>
 
     <!-- Leaflet JS -->
     <script src="../Utils/leaflet.js"></script>
-
+    <script src="../../app/js/nav/nav.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script>
         var map = L.map('map').setView([51.505, -0.09], 13); 
 
@@ -49,7 +76,42 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Check if Geolocation is available
+        // Fetch all users and add their markers to the map
+        async function fetchUsersAndAddMarkers() {
+            try {
+                const response = await fetch('https://serverdimm.onrender.com/getall');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data.');
+                }
+                const users = await response.json();
+                
+                users.forEach(user => {
+                    if (user.latitudine && user.longitudine) {
+                        // Add a marker for each user
+                        L.marker([user.latitudine, user.longitudine]).addTo(map)
+                          .bindPopup(`<div class='popup'><strong>${user.nume}</strong><br>Team: ${user.team}</div>`);
+                    }
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('An error occurred while fetching user data.');
+            }
+        }
+
+        // Call the function to fetch users and add markers
+        fetchUsersAndAddMarkers();
+
+        // Show alert messages
+        function showAlert(message) {
+            var alertMessage = document.getElementById('alertMessage');
+            alertMessage.textContent = message;
+            alertMessage.style.display = 'block'; 
+            setTimeout(function() {
+                alertMessage.style.display = 'none'; 
+            }, 5000);
+        }
+
+        // Check if Geolocation is available and center map on user's location
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 var lat = position.coords.latitude;
@@ -67,15 +129,6 @@
             });
         } else {
             showAlert("Geolocation is not supported by your browser.");
-        }
-
-        function showAlert(message) {
-            var alertMessage = document.getElementById('alertMessage');
-            alertMessage.textContent = message;
-            alertMessage.style.display = 'block'; 
-            setTimeout(function() {
-                alertMessage.style.display = 'none'; 
-            }, 5000);
         }
     </script>
 
