@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
@@ -44,9 +44,7 @@
                     optionalServices: ['battery_service'] // Acest serviciu este doar un exemplu
                 })
                 .then(device => {
-                    return device.gatt.connect().then(server => {
-                        return showDeviceInfo(device, server);
-                    });
+                    showDeviceInfo(device);
                 })
                 .catch(error => {
                     deviceList.innerHTML = `Eroare: ${error}`;
@@ -56,7 +54,7 @@
             }
         }
 
-        function showDeviceInfo(device, server) {
+        function showDeviceInfo(device) {
             const deviceEl = document.createElement('div');
             deviceEl.className = 'device';
             deviceEl.innerHTML = `
@@ -64,28 +62,15 @@
                 ID: ${device.id}<br>
                 Conectat: ${device.gatt.connected ? 'Da' : 'Nu'}<br>
             `;
-
-            // Aici vom încerca să obținem RSSI
-            getRSSI(server).then(rssi => {
-                const distance = getApproximateDistance(rssi);
-                deviceEl.innerHTML += `RSSI: ${rssi} dBm<br>Distanță aproximativă: ${distance}<br>`;
-            }).catch(error => {
-                deviceEl.innerHTML += `Eroare la obținerea RSSI: ${error}`;
-            });
-
             deviceList.innerHTML = '';
             deviceList.appendChild(deviceEl);
-        }
 
-        async function getRSSI(server) {
-            // În general, RSSI poate fi obținut dintr-un caracteristică specifică, 
-            // dar acest lucru depinde de implementarea dispozitivului Bluetooth.
-            // Acest cod este un exemplu general; asigură-te că dispozitivul tău
-            // suportă această funcționalitate.
-            const service = await server.getPrimaryService('battery_service'); // Exemplu de serviciu
-            const characteristic = await service.getCharacteristic('battery_level'); // Exemplu de caracteristică
-            const rssi = -70; // Aici ar trebui să înlocuiești cu obținerea reală a RSSI
-            return rssi; // Returnează valoarea RSSI
+            // Încercăm să obținem mai multe informații despre dispozitiv
+            if (device.gatt.connected) {
+                return device.gatt.disconnect();
+            } else {
+                return device.gatt.connect();
+            }
         }
 
         function getApproximateDistance(rssi) {
