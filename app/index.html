@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e1e; 
+            color: #fff;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; 
+            min-height: 100vh; 
+            padding: 20px;
+        }
+        .section {
+            background-color: rgba(0, 0, 0, 0.8); 
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            margin-bottom: 40px;
+        }
+        .profile-img {
+            border-radius: 50%; 
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin: 0 auto 20px auto;
+            border: 5px solid orange;
+            display: block; 
+        }
+        .profile-info {
+            text-align: center;
+        }
+        .profile-info h2 {
+            margin: 10px 0;
+            font-size: 24px;
+            color: #ff9900; 
+        }
+        .profile-info p {
+            margin: 5px 0;
+            font-size: 18px;
+            color: greenyellow;
+        }
+        .coordinates {
+            text-align: center; 
+        }
+        .coordinates p {
+            font-size: 16px;
+            color: #ffcc66; 
+        }
+        .chat-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .chat-item {
+            display: flex;
+            align-items: center;
+            background-color: rgba(50, 50, 50, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .chat-img {
+            border-radius: 50%; 
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .chat-info {
+            flex-grow: 1;
+            text-align: left;
+        }
+        .chat-info h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #ff9900;
+        }
+        .chat-info p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: greenyellow;
+        }
+        .chat-status {
+            font-size: 14px;
+            color: #cccccc;
+        }
+        .chat-status.online {
+            color: #00ff00;
+        }
+        .chat-status.offline {
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- profile page -->
+        <div class="section">
+            <img src="avatar.png" alt="User Photo" class="profile-img">
+            <div class="profile-info">
+                <h2>Pula Mea</h2>
+                <p>Team: ajsdlk</p>
+            </div>
+            <div class="coordinates">
+                <p>Latitude: 45.7625</p>
+                <p>Longitude: 21.2396</p>
+            </div>
+        </div>
+
+        <!-- chats -->
+        <div class="section">
+            <ul class="chat-list">
+                <li class="chat-item">
+                    <img src="avatar.png" alt="Chat User" class="chat-img">
+                    <div class="chat-info">
+                        <h3>Andrei Andrei</h3>
+                        <p>Distance: 2 km</p>
+                    </div>
+                    <span class="chat-status online">Online</span>
+                </li>
+
+                <li class="chat-item">
+                    <img src="avatar.png" alt="Chat User" class="chat-img">
+                    <div class="chat-info">
+                        <h3>Jasd ASJSA</h3>
+                        <p>Distance: 5 km</p>
+                    </div>
+                    <span class="chat-status offline">Offline</span>
+                </li>
+
+                <li class="chat-item">
+                    <img src="avatar.png" alt="Chat User" class="chat-img">
+                    <div class="chat-info">
+                        <h3>Michael Brown</h3>
+                        <p>Distance: 10 km</p>
+                    </div>
+                    <span class="chat-status online">Online</span>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+</body>
+</html>
