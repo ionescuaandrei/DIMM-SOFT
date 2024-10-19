@@ -46,6 +46,9 @@ body {
 }
 
 .form-container button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 10px 20px;
   background-color: #ff9900;
   border: none;

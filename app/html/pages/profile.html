@@ -6,6 +6,56 @@
     <title>Profile Page</title>
     <link rel="stylesheet" href="../../css/nav/nav.css">
     <link rel="stylesheet" href="../../css/profile.css">
+    <style>
+        /* Popup styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            width: 300px;
+            max-width: 90%;
+            text-align: center;
+        }
+        .popup h2 {
+            color: #ff9900;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .popup input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: #333;
+            color: #fff;
+            font-size: 16px;
+        }
+        .popup button {
+            padding: 10px 20px;
+            background-color: #ff9900;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -22,7 +72,7 @@
             <!-- Update Status (Green button) and See Alert (Orange button) -->
             <div class="btn-group">
                 <button id="updateStatusBtn">Update Status</button>
-                <button id="seeAlertBtn">See Alert</button>
+                <button id="seeAlertBtn">Update Alert Message</button>
             </div>
         </div>
 
@@ -35,6 +85,14 @@
         <button id="exitIcon">
             <ion-icon name="exit-outline"></ion-icon>
         </button>
+    </div>
+
+    <!-- Popup form for updating the alert message -->
+    <div id="popupForm" class="popup">
+        <span class="close-btn" id="closePopup">&times;</span>
+        <h2>Update Alert Message</h2>
+        <input type="text" id="messageText" placeholder="Enter your message">
+        <button id="sendMessage">Send</button>
     </div>
 
     <!-- Navigation Bar -->
@@ -60,7 +118,7 @@
             </span>
           </a>
         </li>
-      </ul>
+    </ul>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
