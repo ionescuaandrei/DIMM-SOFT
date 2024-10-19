@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
     <link rel="stylesheet" href="../../css/nav/nav.css">
     <link rel="stylesheet" href="../../css/profile.css">
 </head>
@@ -18,16 +19,25 @@
                 <p id="longitudine">Longitude: Loading...</p>
             </div>
 
-            <!-- Buttons for actions -->
+            <!-- Update Status (Green button) and See Alert (Orange button) -->
             <div class="btn-group">
-                <button id="seeMapBtn">See Map</button>
                 <button id="updateStatusBtn">Update Status</button>
                 <button id="seeAlertBtn">See Alert</button>
-                <button id="exit">Exit Team</button>
             </div>
         </div>
+
+        <!-- Floating map icon (top left) -->
+        <button id="seeMapIcon">
+            <ion-icon name="map-outline"></ion-icon>
+        </button>
+
+        <!-- Floating exit icon (top right) -->
+        <button id="exitIcon">
+            <ion-icon name="exit-outline"></ion-icon>
+        </button>
     </div>
 
+    <!-- Navigation Bar -->
     <ul class="navigation">
         <li>
           <a href="../../home.html">
