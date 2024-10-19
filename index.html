@@ -8,17 +8,28 @@
 </head>
 <body>
 
-    <div class="form-container">
-        <h2>Intră în Echipa</h2>
-        <form id="teamForm">
-            <label for="nume">Nume:</label>
-            <input type="text" id="nume" name="nume" placeholder="Introdu numele tău" required>
+    <div class="container">
+        <img src="pumpkin.png" alt="logo">
+        <h1>Sp<span class="orange">oo</span>kSp<span class="orange">o</span>t</h1>
+        <h3>Survive through the woods!</h3>
+        <div class="form-container">
+            <h2>Join Team</h2>
+            <form id="teamForm">
+                <label for="nume">Username:</label>
+                <input type="text" id="nume" name="nume" placeholder="Introdu numele tău" required>
+    
+                <label for="echipa">Team code:</label>
+                <input type="text" id="echipa" name="echipa" placeholder="Introdu numele echipei" required>
+                
+                <div class="center">
+                    <button type="submit">Join a team!</button>
+                </div>
+                
+            </form>
+        </div>
+        <p class="copyright1">Made by @DIMM-SOFT</p>
+        <p class="copyright2">Made for IT Fest by Adobe</p>
 
-            <label for="echipa">Echipa:</label>
-            <input type="text" id="echipa" name="echipa" placeholder="Introdu numele echipei" required>
-
-            <button type="submit">Creează Echipa</button>
-        </form>
     </div>
 
     <div class="alert" id="alertMessage"></div>
