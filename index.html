@@ -91,10 +91,9 @@
                 bluetoothDevice = await navigator.bluetooth.requestDevice({
                     // Accept all devices that support any of these services
                     optionalServices: [
-                        '0000FFE0-0000-1000-8000-00805F9B34FB', // Generic chat service
-                        '0000FFE1-0000-1000-8000-00805F9B34FB', // Generic chat characteristic
-                        '6E400001-B5A3-F393-E0A9-E50E24DCCA9E', // Nordic UART
-                        '0000181A-0000-1000-8000-00805F9B34FB', // Environmental Sensing
+                        '0000ffe0-0000-1000-8000-00805f9b34fb', // Generic chat service (corrected UUID)
+                        '6e400001-b5a3-f393-e0a9-e50e24dcca9e', // Nordic UART service
+                        'environmental_sensing', // Environmental Sensing (using standard name)
                     ],
                     // Accept any Bluetooth LE device
                     acceptAllDevices: true
@@ -105,25 +104,25 @@
 
                 // Try to find a supported service
                 let service;
-                try {
-                    service = await server.getPrimaryService('0000FFE0-0000-1000-8000-00805F9B34FB');
-                } catch (e) {
+                for (const serviceUUID of ['0000ffe0-0000-1000-8000-00805f9b34fb', '6e400001-b5a3-f393-e0a9-e50e24dcca9e', 'environmental_sensing']) {
                     try {
-                        service = await server.getPrimaryService('6E400001-B5A3-F393-E0A9-E50E24DCCA9E');
-                    } catch (e2) {
-                        throw new Error('No compatible service found');
+                        service = await server.getPrimaryService(serviceUUID);
+                        break;
+                    } catch (e) {
+                        console.log(`Service ${serviceUUID} not found, trying next...`);
                     }
                 }
 
+                if (!service) {
+                    throw new Error('No compatible service found');
+                }
+
                 // Try to find a characteristic
-                try {
-                    characteristicCache = await service.getCharacteristic('0000FFE1-0000-1000-8000-00805F9B34FB');
-                } catch (e) {
-                    try {
-                        characteristicCache = await service.getCharacteristic('6E400003-B5A3-F393-E0A9-E50E24DCCA9E');
-                    } catch (e2) {
-                        throw new Error('No compatible characteristic found');
-                    }
+                characteristicCache = await service.getCharacteristic('0000ffe1-0000-1000-8000-00805f9b34fb') ||
+                                      await service.getCharacteristic('6e400003-b5a3-f393-e0a9-e50e24dcca9e');
+
+                if (!characteristicCache) {
+                    throw new Error('No compatible characteristic found');
                 }
 
                 // Enable notifications
