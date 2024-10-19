@@ -17,7 +17,7 @@ document.getElementById('updateStatusBtn').addEventListener('click', function() 
           // Call the update function with new lat and lng
           updateUserLocation(userId, newLat, newLng);
       }, function(error) {
-          
+          console.error("Geolocation error:", error);
       });
   } else {
       alert("Geolocation is not supported by your browser.");
@@ -28,6 +28,12 @@ document.getElementById('seeAlertBtn').addEventListener('click', function() {
   alert('Alert seen!'); // Implement alert logic here
 });
 
+// Exit button logic to delete user from database and local storage
+document.getElementById('exit').addEventListener('click', function() {
+    deleteUser(userId);
+});
+
+// Fetch user profile data
 async function getUserProfile(userId) {
   try {
       const response = await fetch(`https://serverdimm.onrender.com/get/${userId}`);
@@ -64,13 +70,34 @@ async function updateUserLocation(userId, latitudine, longitudine) {
       }
 
       const data = await response.json();
-      
-      
-      
       getUserProfile(userId);
 
   } catch (error) {
       console.error('Error:', error);
-      
+  }
+}
+
+// Function to delete user from database and local storage
+async function deleteUser(userId) {
+  try {
+      const response = await fetch(`https://serverdimm.onrender.com/delete/${userId}`, {
+          method: 'DELETE', // DELETE request to remove the user
+      });
+
+      if (!response.ok) {
+          throw new Error('Failed to delete user.');
+      }
+
+      const data = await response.json();
+
+      // Remove userId from localStorage
+      localStorage.removeItem('echipaId');
+
+      // Redirect to home page or login page after deletion
+      window.location.href = "../../../index.html";
+
+  } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while trying to delete the user.');
   }
 }
