@@ -2,9 +2,6 @@ const userId = localStorage.getItem('echipaId');  // 'echipaId' is the key used 
 
 if (userId) {
   getUserProfile(userId);
-} else {
-  console.error('No user ID found in localStorage');
-  alert('No user ID found. Please register the team first.');
 }
 
 document.getElementById('seeMapBtn').addEventListener('click', function() {
@@ -12,7 +9,19 @@ document.getElementById('seeMapBtn').addEventListener('click', function() {
 });
 
 document.getElementById('updateStatusBtn').addEventListener('click', function() {
-  alert('Status updated!'); // Implement actual status update logic here
+  if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+          const newLat = position.coords.latitude;
+          const newLng = position.coords.longitude;
+          
+          // Call the update function with new lat and lng
+          updateUserLocation(userId, newLat, newLng);
+      }, function(error) {
+          
+      });
+  } else {
+      alert("Geolocation is not supported by your browser.");
+  }
 });
 
 document.getElementById('seeAlertBtn').addEventListener('click', function() {
@@ -36,8 +45,32 @@ async function getUserProfile(userId) {
       document.getElementById('dataultimuluiUpdate').textContent = `Last Update: ${data.dataultimuluiUpdate}`;
   } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred while fetching the profile data.');
   }
 }
 
+// Function to update user's latitude and longitude
+async function updateUserLocation(userId, latitudine, longitudine) {
+  try {
+      const response = await fetch(`https://serverdimm.onrender.com/update/${userId}`, {
+          method: 'PUT', // or 'PATCH' depending on your API
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ latitudine, longitudine })
+      });
 
+      if (!response.ok) {
+          throw new Error('Failed to update user location.');
+      }
+
+      const data = await response.json();
+      
+      
+      
+      getUserProfile(userId);
+
+  } catch (error) {
+      console.error('Error:', error);
+      
+  }
+}
