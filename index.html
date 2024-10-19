@@ -1,208 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <title>Bluetooth Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner Bluetooth</title>
+    <link rel="stylesheet" href="../app/css/nav/nav.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-        }
-        #messageContainer {
-            border: 1px solid #ccc;
-            height: 300px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-            padding: 10px;
-        }
-        #messageInput {
-            width: 70%;
-            padding: 10px;
-            margin-right: 10px;
+            min-height: 100vh;
+            background: #1e1e1e;
         }
         button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
+            padding: 10px;
+            font-size: 16px;
             cursor: pointer;
         }
-        button:disabled {
-            background-color: #ccc;
+        #deviceList {
+            margin-top: 20px;
         }
-        .message {
-            margin: 5px 0;
-            padding: 5px;
-            border-radius: 5px;
-        }
-        .sent {
-            background-color: #e3f2fd;
-            text-align: right;
-        }
-        .received {
-            background-color: #f5f5f5;
-        }
-        #status {
-            margin: 10px 0;
+        .device {
+            border: 1px solid #ddd;
             padding: 10px;
-            border-radius: 5px;
-            background-color: #f8f9fa;
-        }
-        .error {
-            color: red;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Bluetooth Chat</h1>
-    <div id="status"></div>
-    <button id="connectBtn">Connect to Device</button>
-    <div id="messageContainer"></div>
-    <div>
-        <input type="text" id="messageInput" placeholder="Type your message..." disabled>
-        <button id="sendBtn" disabled>Send</button>
-    </div>
+    <h1>Scanner Bluetooth</h1>
+    <button onclick="scanDevices()">Scanează dispozitive</button>
+    <div id="deviceList"></div>
+
+    <ul class="navigation">
+        <li class="active">
+          <a href="../index.html">
+            <span class="icon">
+              <ion-icon name="home-outline"></ion-icon>
+            </span>
+            <span class="text">Home</span>
+          </a>
+        </li>
+        <li>
+          <a href="../app/html/pages/profile.html">
+            <span class="icon">
+              <ion-icon name="person-outline"></ion-icon>
+            </span>
+            <span class="text">Profile</span>
+          </a>
+        </li>
+        <li>
+          <a href="../app/html/pages/chats.html">
+            <span class="icon">
+              <ion-icon name="chatbubble-outline"></ion-icon>
+            </span>
+            <span class="text">Messages</span>
+          </a>
+        </li>
+      </ul>
 
     <script>
-        let bluetoothDevice;
-        let characteristicCache;
-        const statusDiv = document.getElementById('status');
-        const connectBtn = document.getElementById('connectBtn');
-        const messageInput = document.getElementById('messageInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const messageContainer = document.getElementById('messageContainer');
+        let deviceList;
+        function scanDevices() {
+            deviceList = document.getElementById('deviceList');
+            deviceList.innerHTML = 'Scanare în curs...';
 
-        // Check if Web Bluetooth is supported
-        if (!navigator.bluetooth) {
-            updateStatus('Web Bluetooth is not supported in your browser. Try using Chrome or Edge.', true);
-            connectBtn.disabled = true;
-        }
-
-        connectBtn.addEventListener('click', connect);
-        sendBtn.addEventListener('click', sendMessage);
-
-        async function connect() {
-            try {
-                updateStatus('Requesting Bluetooth device...', false);
-
-                // Request device with multiple service options
-                bluetoothDevice = await navigator.bluetooth.requestDevice({
-                    // Accept all devices that support any of these services
-                    optionalServices: [
-                        '0000ffe0-0000-1000-8000-00805f9b34fb', // Generic chat service (corrected UUID)
-                        '6e400001-b5a3-f393-e0a9-e50e24dcca9e', // Nordic UART service
-                        'environmental_sensing', // Environmental Sensing (using standard name)
-                    ],
-                    // Accept any Bluetooth LE device
-                    acceptAllDevices: true
+            if ('bluetooth' in navigator) {
+                navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true,
+                    optionalServices: ['battery_service'] // Acest serviciu este doar un exemplu
+                })
+                .then(device => {
+                    showDeviceInfo(device);
+                })
+                .catch(error => {
+                    deviceList.innerHTML = `Eroare: ${error}`;
                 });
-
-                updateStatus('Connecting to device...', false);
-                const server = await bluetoothDevice.gatt.connect();
-
-                // Try to find a supported service
-                let service;
-                for (const serviceUUID of ['0000ffe0-0000-1000-8000-00805f9b34fb', '6e400001-b5a3-f393-e0a9-e50e24dcca9e', 'environmental_sensing']) {
-                    try {
-                        service = await server.getPrimaryService(serviceUUID);
-                        break;
-                    } catch (e) {
-                        console.log(`Service ${serviceUUID} not found, trying next...`);
-                    }
-                }
-
-                if (!service) {
-                    throw new Error('No compatible service found');
-                }
-
-                // Try to find a characteristic
-                characteristicCache = await service.getCharacteristic('0000ffe1-0000-1000-8000-00805f9b34fb') ||
-                                      await service.getCharacteristic('6e400003-b5a3-f393-e0a9-e50e24dcca9e');
-
-                if (!characteristicCache) {
-                    throw new Error('No compatible characteristic found');
-                }
-
-                // Enable notifications
-                await characteristicCache.startNotifications();
-                characteristicCache.addEventListener('characteristicvaluechanged', handleCharacteristicValueChanged);
-
-                // Update UI
-                updateStatus('Connected to ' + bluetoothDevice.name, false);
-                connectBtn.textContent = 'Connected';
-                connectBtn.disabled = true;
-                messageInput.disabled = false;
-                sendBtn.disabled = false;
-
-                // Handle disconnection
-                bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
-
-            } catch (error) {
-                console.error('Error:', error);
-                updateStatus('Error: ' + error.message, true);
-                onDisconnected();
+            } else {
+                deviceList.innerHTML = 'Web Bluetooth API nu este suportat în acest browser.';
             }
         }
 
-        function updateStatus(message, isError) {
-            statusDiv.textContent = message;
-            statusDiv.className = isError ? 'error' : '';
-        }
+        function showDeviceInfo(device) {
+            const deviceEl = document.createElement('div');
+            deviceEl.className = 'device';
+            deviceEl.innerHTML = `
+                <strong>${device.name || 'Dispozitiv necunoscut'}</strong><br>
+                ID: ${device.id}<br>
+                Conectat: ${device.gatt.connected ? 'Da' : 'Nu'}<br>
+            `;
+            deviceList.innerHTML = '';
+            deviceList.appendChild(deviceEl);
 
-        function onDisconnected() {
-            updateStatus('Device disconnected', true);
-            connectBtn.textContent = 'Connect to Device';
-            connectBtn.disabled = false;
-            messageInput.disabled = true;
-            sendBtn.disabled = true;
-            characteristicCache = null;
-        }
-
-        async function sendMessage() {
-            if (!characteristicCache) {
-                updateStatus('Not connected to any device', true);
-                return;
-            }
-
-            const message = messageInput.value.trim();
-            if (message === '') {
-                return;
-            }
-
-            try {
-                const encoder = new TextEncoder();
-                await characteristicCache.writeValue(encoder.encode(message));
-                
-                addMessageToContainer(message, true);
-                messageInput.value = '';
-            } catch (error) {
-                console.error('Error:', error);
-                updateStatus('Failed to send message: ' + error.message, true);
+            // Încercăm să obținem mai multe informații despre dispozitiv
+            if (device.gatt.connected) {
+                return device.gatt.disconnect();
+            } else {
+                return device.gatt.connect();
             }
         }
 
-        function handleCharacteristicValueChanged(event) {
-            const decoder = new TextDecoder();
-            const message = decoder.decode(event.target.value);
-            addMessageToContainer(message, false);
+        function getApproximateDistance(rssi) {
+            if (rssi >= -50) return 'Foarte aproape (< 1m)';
+            if (rssi >= -60) return 'Aproape (1-2m)';
+            if (rssi >= -70) return 'Moderat (2-5m)';
+            if (rssi >= -80) return 'Departe (5-10m)';
+            return 'Foarte departe (> 10m)';
         }
 
-        function addMessageToContainer(message, sent) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
-            messageElement.classList.add(sent ? 'sent' : 'received');
-            messageElement.textContent = message;
-            messageContainer.appendChild(messageElement);
-            messageContainer.scrollTop = messageContainer.scrollHeight;
-        }
-
-        messageInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        });
     </script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="../app/js/nav/nav.js"></script>
 </body>
 </html>
