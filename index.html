@@ -28,45 +28,25 @@
 </head>
 <body>
     <h1>Scanner Bluetooth</h1>
-    <button onclick="scanDevices()">Scanează dispozitive</button>
-    <button onclick="showPairedDevices()">Arată dispozitivele asociate</button>
+    <button onclick="showConnectedDevices()">Arată dispozitivele conectate</button>
     <div id="deviceList"></div>
-
     <script>
         let deviceList;
 
-        function scanDevices() {
+        function showConnectedDevices() {
             deviceList = document.getElementById('deviceList');
-            deviceList.innerHTML = 'Scanare în curs...';
-
-            if ('bluetooth' in navigator) {
-                navigator.bluetooth.requestDevice({
-                    acceptAllDevices: true,
-                    optionalServices: ['battery_service'] // Acest serviciu este doar un exemplu
-                })
-                .then(device => {
-                    showDeviceInfo(device);
-                })
-                .catch(error => {
-                    deviceList.innerHTML = `Eroare: ${error}`;
-                });
-            } else {
-                deviceList.innerHTML = 'Web Bluetooth API nu este suportat în acest browser.';
-            }
-        }
-
-        function showPairedDevices() {
-            deviceList = document.getElementById('deviceList');
-            deviceList.innerHTML = 'Încerc să obțin dispozitivele asociate...';
-
+            deviceList.innerHTML = 'Se caută dispozitive conectate...';
+            
             if ('bluetooth' in navigator) {
                 navigator.bluetooth.getDevices()
                 .then(devices => {
-                    if (devices.length === 0) {
-                        deviceList.innerHTML = 'Nu sunt dispozitive asociate.';
+                    deviceList.innerHTML = '';
+                    let connectedDevices = devices.filter(device => device.gatt.connected);
+                    
+                    if (connectedDevices.length === 0) {
+                        deviceList.innerHTML = 'Nu sunt dispozitive conectate.';
                     } else {
-                        deviceList.innerHTML = '';
-                        devices.forEach(device => {
+                        connectedDevices.forEach(device => {
                             showDeviceInfo(device);
                         });
                     }
@@ -85,24 +65,9 @@
             deviceEl.innerHTML = `
                 <strong>${device.name || 'Dispozitiv necunoscut'}</strong><br>
                 ID: ${device.id}<br>
-                Conectat: ${device.gatt && device.gatt.connected ? 'Da' : 'Nu'}<br>
+                Conectat: Da
             `;
             deviceList.appendChild(deviceEl);
-
-            // Încercăm să obținem mai multe informații despre dispozitiv
-            if (device.gatt && device.gatt.connected) {
-                return device.gatt.disconnect();
-            } else if (device.gatt) {
-                return device.gatt.connect();
-            }
-        }
-
-        function getApproximateDistance(rssi) {
-            if (rssi >= -50) return 'Foarte aproape (< 1m)';
-            if (rssi >= -60) return 'Aproape (1-2m)';
-            if (rssi >= -70) return 'Moderat (2-5m)';
-            if (rssi >= -80) return 'Departe (5-10m)';
-            return 'Foarte departe (> 10m)';
         }
     </script>
 </body>
