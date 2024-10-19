@@ -29,6 +29,7 @@
 <body>
     <h1>Scanner Bluetooth</h1>
     <button onclick="scanDevices()">Scanează dispozitive</button>
+    <button onclick="showPairedDevices()">Arată dispozitivele asociate</button>
     <div id="deviceList"></div>
 
     <script>
@@ -54,21 +55,44 @@
             }
         }
 
+        function showPairedDevices() {
+            deviceList = document.getElementById('deviceList');
+            deviceList.innerHTML = 'Încerc să obțin dispozitivele asociate...';
+
+            if ('bluetooth' in navigator) {
+                navigator.bluetooth.getDevices()
+                .then(devices => {
+                    if (devices.length === 0) {
+                        deviceList.innerHTML = 'Nu sunt dispozitive asociate.';
+                    } else {
+                        deviceList.innerHTML = '';
+                        devices.forEach(device => {
+                            showDeviceInfo(device);
+                        });
+                    }
+                })
+                .catch(error => {
+                    deviceList.innerHTML = `Eroare: ${error}`;
+                });
+            } else {
+                deviceList.innerHTML = 'Web Bluetooth API nu este suportat în acest browser.';
+            }
+        }
+
         function showDeviceInfo(device) {
             const deviceEl = document.createElement('div');
             deviceEl.className = 'device';
             deviceEl.innerHTML = `
                 <strong>${device.name || 'Dispozitiv necunoscut'}</strong><br>
                 ID: ${device.id}<br>
-                Conectat: ${device.gatt.connected ? 'Da' : 'Nu'}<br>
+                Conectat: ${device.gatt && device.gatt.connected ? 'Da' : 'Nu'}<br>
             `;
-            deviceList.innerHTML = '';
             deviceList.appendChild(deviceEl);
 
             // Încercăm să obținem mai multe informații despre dispozitiv
-            if (device.gatt.connected) {
+            if (device.gatt && device.gatt.connected) {
                 return device.gatt.disconnect();
-            } else {
+            } else if (device.gatt) {
                 return device.gatt.connect();
             }
         }
