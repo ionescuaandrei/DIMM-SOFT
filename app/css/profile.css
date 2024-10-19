@@ -9,19 +9,15 @@ body {
   align-items: center;
   min-height: 100vh;
 }
-
 .container {
   width: 90%;
   max-width: 400px;
-  background-color: rgba(0, 0, 0, 0.8); /* Fundal uniform pentru container */
-  border-radius: 20px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-  padding: 30px;
-  position: relative;
 }
 
 .section {
- 
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
   padding: 30px;
   margin-bottom: 40px;
 }
@@ -65,50 +61,6 @@ body {
   background-color: #0056b3;
 }
 
-
-
-.seeMapIcon {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  color: #4CAF50; /* Green color for the map icon */
-  font-size: 24px;
-}
-
-/* Floating exit icon (right corner) */
-.exitIcon {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background-color: transparent; /* Fundal transparent */
-  border: none;
-  cursor: pointer;
-  color: #f44336; /* Red color for the exit icon */
-  font-size: 24px;
-}
-
-#updateStatusBtn {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background-color: #4CAF50; /* Green background */
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-/* See Alert button (unchanged) */
-#seeAlertBtn {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background-color: #ff9900; /* Original orange color */
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
+#exit{
+  background: red;
 }
