@@ -3,47 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scanare Bluetooth</title>
+    <title>Scanner Bluetooth</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
         }
         #deviceList {
-            list-style-type: none;
-            padding: 0;
+            margin-top: 20px;
         }
-        #deviceList li {
+        .device {
+            border: 1px solid #ddd;
             padding: 10px;
-            border: 1px solid #ccc;
-            margin-top: 5px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Scanare Dispozitive Bluetooth</h1>
-    <button id="scanButton">Scanează dispozitive Bluetooth</button>
-    <ul id="deviceList"></ul>
+    <h1>Scanner Bluetooth</h1>
+    <button onclick="scanDevices()">Scanează dispozitive</button>
+    <div id="deviceList"></div>
 
     <script>
-        const scanButton = document.getElementById('scanButton');
-        const deviceList = document.getElementById('deviceList');
+        let deviceList;
 
-        scanButton.addEventListener('click', async () => {
-            try {
-                const options = {
-                    filters: [{ services: ['battery_service'] }] // Poți schimba în funcție de nevoile tale
-                };
-                const device = await navigator.bluetooth.requestDevice(options);
-                const listItem = document.createElement('li');
-                listItem.textContent = `Dispozitiv: ${device.name}, ID: ${device.id}`;
-                deviceList.appendChild(listItem);
-                
-                // Aici se poate adăuga logica pentru a obține RSSI, dar este limitată
-            } catch (error) {
-                console.error('Eroare la scanare:', error);
+        function scanDevices() {
+            deviceList = document.getElementById('deviceList');
+            deviceList.innerHTML = 'Scanare în curs...';
+
+            if ('bluetooth' in navigator) {
+                navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true,
+                    optionalServices: ['battery_service'] // Acest serviciu este doar un exemplu
+                })
+                .then(device => {
+                    showDeviceInfo(device);
+                })
+                .catch(error => {
+                    deviceList.innerHTML = `Eroare: ${error}`;
+                });
+            } else {
+                deviceList.innerHTML = 'Web Bluetooth API nu este suportat în acest browser.';
             }
-        });
+        }
+
+        function showDeviceInfo(device) {
+            const deviceEl = document.createElement('div');
+            deviceEl.className = 'device';
+            deviceEl.innerHTML = `
+                <strong>${device.name || 'Dispozitiv necunoscut'}</strong><br>
+                ID: ${device.id}<br>
+                Conectat: ${device.gatt.connected ? 'Da' : 'Nu'}<br>
+            `;
+            deviceList.innerHTML = '';
+            deviceList.appendChild(deviceEl);
+
+            // Încercăm să obținem mai multe informații despre dispozitiv
+            if (device.gatt.connected) {
+                return device.gatt.disconnect();
+            } else {
+                return device.gatt.connect();
+            }
+        }
+
+        function getApproximateDistance(rssi) {
+            if (rssi >= -50) return 'Foarte aproape (< 1m)';
+            if (rssi >= -60) return 'Aproape (1-2m)';
+            if (rssi >= -70) return 'Moderat (2-5m)';
+            if (rssi >= -80) return 'Departe (5-10m)';
+            return 'Foarte departe (> 10m)';
+        }
     </script>
 </body>
 </html>
