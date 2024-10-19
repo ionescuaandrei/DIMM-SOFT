@@ -52,7 +52,7 @@ function sendFormData(nume, echipa, latitude, longitude) {
           console.log('Success:', data);
 
           // Redirect către pagina de profil
-          window.location.href = "../app/html/pages/profile.html"; 
+          window.location.href = "../DIMM-SOFT/app/html/pages/profile.html"; 
       } else {
           showAlert('Failed to create echipa: Unexpected response.');
       }
