@@ -16,6 +16,7 @@ body {
 }
 
 .navigation {
+  z-index: 1000;
   position: fixed;
   bottom: 0; /* Aligns the navigation to the bottom */
   left: 0;

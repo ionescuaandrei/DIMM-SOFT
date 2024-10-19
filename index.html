@@ -1,37 +1,89 @@
-<!DOCTYPE html>
-<html lang="ro">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scanner Bluetooth</title>
-    <link rel="stylesheet" href="../app/css/nav/nav.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0 auto;
-            padding: 20px;
-            min-height: 100vh;
-            background: #1e1e1e;
-        }
-        button {
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        #deviceList {
-            margin-top: 20px;
-        }
-        .device {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
 <body>
-    <h1>Scanner Bluetooth</h1>
-    <button onclick="scanDevices()">Scanează dispozitive</button>
-    <div id="deviceList"></div>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>My Location with Leaflet</title>
+      <!-- Leaflet CSS -->
+      <link rel="stylesheet" href="../Utils/leaflet.css" />
+    <link rel="stylesheet" href="../app/css/nav/nav.css">
+
+</head>
+
+      <style>
+          body {
+              margin: 0;
+              font-family: Arial, sans-serif;
+              background-color: #f8f9fa; 
+          }
+          #map {
+              height: 100vh;
+              width: 100%;
+          }
+          .popup {
+              font-size: 1.1em; 
+          }
+          .alert {
+              position: absolute;
+              top: 20px;
+              left: 50%;
+              transform: translateX(-50%);
+              background-color: rgba(255, 255, 255, 0.9); 
+              border-radius: 5px;
+              padding: 10px 15px;
+              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+              z-index: 1000; 
+              display: none; 
+          }
+      </style>
+  </head>
+  <body>
+  
+      <div id="map"></div>
+      <div class="alert" id="alertMessage"></div>
+  
+      <!-- Leaflet JS -->
+      <script src="../Utils/leaflet.js"></script>
+  
+      <script>
+          var map = L.map('map').setView([51.505, -0.09], 13); 
+  
+          // Add OpenStreetMap tiles
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '© OpenStreetMap contributors'
+          }).addTo(map);
+  
+          // Check if Geolocation is available
+          if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(function(position) {
+                  var lat = position.coords.latitude;
+                  var lng = position.coords.longitude;
+  
+                  // Set the map's view to the user's location
+                  map.setView([lat, lng], 13);
+  
+                  // Add a marker at the user's location
+                  L.marker([lat, lng]).addTo(map)
+                      .bindPopup("<div class='popup'>You are here!</div>")
+                      .openPopup();
+              }, function(error) {
+                  showAlert("Unable to retrieve your location due to " + error.message);
+              });
+          } else {
+              showAlert("Geolocation is not supported by your browser.");
+          }
+  
+          function showAlert(message) {
+              var alertMessage = document.getElementById('alertMessage');
+              alertMessage.textContent = message;
+              alertMessage.style.display = 'block'; 
+              setTimeout(function() {
+                  alertMessage.style.display = 'none'; 
+              }, 5000);
+          }
+      </script>
+
 
     <ul class="navigation">
         <li class="active">
@@ -60,56 +112,6 @@
         </li>
       </ul>
 
-    <script>
-        let deviceList;
-        function scanDevices() {
-            deviceList = document.getElementById('deviceList');
-            deviceList.innerHTML = 'Scanare în curs...';
-
-            if ('bluetooth' in navigator) {
-                navigator.bluetooth.requestDevice({
-                    acceptAllDevices: true,
-                    optionalServices: ['battery_service'] // Acest serviciu este doar un exemplu
-                })
-                .then(device => {
-                    showDeviceInfo(device);
-                })
-                .catch(error => {
-                    deviceList.innerHTML = `Eroare: ${error}`;
-                });
-            } else {
-                deviceList.innerHTML = 'Web Bluetooth API nu este suportat în acest browser.';
-            }
-        }
-
-        function showDeviceInfo(device) {
-            const deviceEl = document.createElement('div');
-            deviceEl.className = 'device';
-            deviceEl.innerHTML = `
-                <strong>${device.name || 'Dispozitiv necunoscut'}</strong><br>
-                ID: ${device.id}<br>
-                Conectat: ${device.gatt.connected ? 'Da' : 'Nu'}<br>
-            `;
-            deviceList.innerHTML = '';
-            deviceList.appendChild(deviceEl);
-
-            // Încercăm să obținem mai multe informații despre dispozitiv
-            if (device.gatt.connected) {
-                return device.gatt.disconnect();
-            } else {
-                return device.gatt.connect();
-            }
-        }
-
-        function getApproximateDistance(rssi) {
-            if (rssi >= -50) return 'Foarte aproape (< 1m)';
-            if (rssi >= -60) return 'Aproape (1-2m)';
-            if (rssi >= -70) return 'Moderat (2-5m)';
-            if (rssi >= -80) return 'Departe (5-10m)';
-            return 'Foarte departe (> 10m)';
-        }
-
-    </script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <script src="../app/js/nav/nav.js"></script>
