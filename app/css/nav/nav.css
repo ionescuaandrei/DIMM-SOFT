@@ -22,12 +22,10 @@ body {
   width: 100vw;
   height: 110px;
   background: #242433;
-  border-radius: 25px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
 
 .navigation li {
   position: relative;

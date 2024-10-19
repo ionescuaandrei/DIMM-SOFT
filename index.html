@@ -44,10 +44,20 @@
         .received {
             background-color: #f5f5f5;
         }
+        #status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .error {
+            color: red;
+        }
     </style>
 </head>
 <body>
     <h1>Bluetooth Chat</h1>
+    <div id="status"></div>
     <button id="connectBtn">Connect to Device</button>
     <div id="messageContainer"></div>
     <div>
@@ -58,34 +68,70 @@
     <script>
         let bluetoothDevice;
         let characteristicCache;
-        const serviceUUID = '0000FFE0-0000-1000-8000-00805F9B34FB'; // Generic chat service
-        const characteristicUUID = '0000FFE1-0000-1000-8000-00805F9B34FB'; // Generic chat characteristic
-
+        const statusDiv = document.getElementById('status');
         const connectBtn = document.getElementById('connectBtn');
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
         const messageContainer = document.getElementById('messageContainer');
+
+        // Check if Web Bluetooth is supported
+        if (!navigator.bluetooth) {
+            updateStatus('Web Bluetooth is not supported in your browser. Try using Chrome or Edge.', true);
+            connectBtn.disabled = true;
+        }
 
         connectBtn.addEventListener('click', connect);
         sendBtn.addEventListener('click', sendMessage);
 
         async function connect() {
             try {
+                updateStatus('Requesting Bluetooth device...', false);
+
+                // Request device with multiple service options
                 bluetoothDevice = await navigator.bluetooth.requestDevice({
-                    filters: [{
-                        services: [serviceUUID]
-                    }]
+                    // Accept all devices that support any of these services
+                    optionalServices: [
+                        '0000FFE0-0000-1000-8000-00805F9B34FB', // Generic chat service
+                        '0000FFE1-0000-1000-8000-00805F9B34FB', // Generic chat characteristic
+                        '6E400001-B5A3-F393-E0A9-E50E24DCCA9E', // Nordic UART
+                        '0000181A-0000-1000-8000-00805F9B34FB', // Environmental Sensing
+                    ],
+                    // Accept any Bluetooth LE device
+                    acceptAllDevices: true
                 });
 
+                updateStatus('Connecting to device...', false);
                 const server = await bluetoothDevice.gatt.connect();
-                const service = await server.getPrimaryService(serviceUUID);
-                characteristicCache = await service.getCharacteristic(characteristicUUID);
+
+                // Try to find a supported service
+                let service;
+                try {
+                    service = await server.getPrimaryService('0000FFE0-0000-1000-8000-00805F9B34FB');
+                } catch (e) {
+                    try {
+                        service = await server.getPrimaryService('6E400001-B5A3-F393-E0A9-E50E24DCCA9E');
+                    } catch (e2) {
+                        throw new Error('No compatible service found');
+                    }
+                }
+
+                // Try to find a characteristic
+                try {
+                    characteristicCache = await service.getCharacteristic('0000FFE1-0000-1000-8000-00805F9B34FB');
+                } catch (e) {
+                    try {
+                        characteristicCache = await service.getCharacteristic('6E400003-B5A3-F393-E0A9-E50E24DCCA9E');
+                    } catch (e2) {
+                        throw new Error('No compatible characteristic found');
+                    }
+                }
 
                 // Enable notifications
                 await characteristicCache.startNotifications();
                 characteristicCache.addEventListener('characteristicvaluechanged', handleCharacteristicValueChanged);
 
                 // Update UI
+                updateStatus('Connected to ' + bluetoothDevice.name, false);
                 connectBtn.textContent = 'Connected';
                 connectBtn.disabled = true;
                 messageInput.disabled = false;
@@ -96,12 +142,18 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                alert('An error occurred while connecting');
+                updateStatus('Error: ' + error.message, true);
+                onDisconnected();
             }
         }
 
+        function updateStatus(message, isError) {
+            statusDiv.textContent = message;
+            statusDiv.className = isError ? 'error' : '';
+        }
+
         function onDisconnected() {
-            // Reset UI
+            updateStatus('Device disconnected', true);
             connectBtn.textContent = 'Connect to Device';
             connectBtn.disabled = false;
             messageInput.disabled = true;
@@ -111,6 +163,7 @@
 
         async function sendMessage() {
             if (!characteristicCache) {
+                updateStatus('Not connected to any device', true);
                 return;
             }
 
@@ -123,12 +176,11 @@
                 const encoder = new TextEncoder();
                 await characteristicCache.writeValue(encoder.encode(message));
                 
-                // Display sent message
                 addMessageToContainer(message, true);
                 messageInput.value = '';
             } catch (error) {
                 console.error('Error:', error);
-                alert('Failed to send message');
+                updateStatus('Failed to send message: ' + error.message, true);
             }
         }
 
@@ -147,7 +199,6 @@
             messageContainer.scrollTop = messageContainer.scrollHeight;
         }
 
-        // Handle enter key in message input
         messageInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 sendMessage();
