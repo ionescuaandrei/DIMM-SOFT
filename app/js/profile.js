@@ -51,12 +51,6 @@ document.getElementById('closePopup').addEventListener('click', function() {
 // Handle sending the updated alert message
 document.getElementById('sendMessage').addEventListener('click', async function() {
     const message = document.getElementById('messageText').value.trim();
-
-    if (message === "") {
-        alert('Please enter a message');
-        return;
-    }
-
     try {
         const response = await fetch(`https://serverdimm.onrender.com/update-alert/${userId}`, {
             method: 'PATCH',  // HTTP method for updating
@@ -71,11 +65,9 @@ document.getElementById('sendMessage').addEventListener('click', async function(
         }
 
         const result = await response.json();
-        alert('Alert message updated successfully!');
         document.getElementById('popupForm').style.display = 'none';  // Close the popup after updating
     } catch (error) {
         console.error('Error updating alert message:', error);
-        alert('Could not update the alert message. Please try again later.');
     }
 });
 
